@@ -32,6 +32,12 @@
   const featuredWrap=document.querySelector('.featured-projects');
   const featuredSlides=featuredWrap?Array.from(featuredWrap.querySelectorAll('.hero-project-preview')):[];
   const featuredCard=featuredWrap?featuredWrap.closest('.browser-card'):null;
+  const applyFeaturedTheme=(slide)=>{
+    const theme=(slide&&slide.dataset.featureTheme)||'web';
+    if(featuredCard)featuredCard.dataset.featureTheme=theme;
+    document.body.dataset.siteTheme=theme;
+  };
+  if(featuredSlides.length)applyFeaturedTheme(featuredSlides[0]);
   if(featuredSlides.length>1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     let featuredIndex=0;
     const interval=Number(featuredWrap.dataset.featuredInterval)||8000;
@@ -41,7 +47,7 @@
       featuredIndex=(nextIndex+featuredSlides.length)%featuredSlides.length;
       const nextSlide=featuredSlides[featuredIndex];
       nextSlide.classList.add('active');
-      if(featuredCard)featuredCard.dataset.featureTheme=nextSlide.dataset.featureTheme||'web';
+      applyFeaturedTheme(nextSlide);
     };
     const startFeatured=()=>{
       if(featuredTimer)return;
@@ -55,7 +61,7 @@
     document.addEventListener('visibilitychange',()=>{
       if(document.hidden)stopFeatured();else startFeatured();
     });
-    if(featuredCard)featuredCard.dataset.featureTheme=featuredSlides[0].dataset.featureTheme||'analytics';
+    applyFeaturedTheme(featuredSlides[0]);
     startFeatured();
   }
 
