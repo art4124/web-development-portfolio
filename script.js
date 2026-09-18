@@ -14,7 +14,7 @@
     }));
   }
 
-  const items=document.querySelectorAll('.reveal');
+  const revealItems=document.querySelectorAll('.reveal');
   if('IntersectionObserver' in window){
     const observer=new IntersectionObserver(entries=>{
       entries.forEach(entry=>{
@@ -24,8 +24,57 @@
         }
       });
     },{threshold:.12});
-    items.forEach(item=>observer.observe(item));
+    revealItems.forEach(item=>observer.observe(item));
   }else{
-    items.forEach(item=>item.classList.add('visible'));
+    revealItems.forEach(item=>item.classList.add('visible'));
+  }
+
+  const track=document.querySelector('.carousel-track');
+  const slides=track?Array.from(track.querySelectorAll('.project-slide')):[];
+  const prev=document.querySelector('.carousel-arrow.prev');
+  const next=document.querySelector('.carousel-arrow.next');
+  const dotsWrap=document.querySelector('.carousel-dots');
+  const count=document.querySelector('.carousel-count');
+  let index=0;
+  let touchStartX=null;
+
+  function renderDots(){
+    if(!dotsWrap)return;
+    dotsWrap.innerHTML='';
+    slides.forEach((_,i)=>{
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='carousel-dot'+(i===0?' active':'');
+      button.setAttribute('aria-label','Show project '+(i+1));
+      button.addEventListener('click',()=>goTo(i));
+      dotsWrap.appendChild(button);
+    });
+  }
+
+  function goTo(i){
+    if(!slides.length)return;
+    index=Math.max(0,Math.min(i,slides.length-1));
+    track.style.transform='translateX(-'+(index*100)+'%)';
+    if(prev)prev.disabled=index===0;
+    if(next)next.disabled=index===slides.length-1;
+    if(count)count.textContent=String(index+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+    if(dotsWrap)Array.from(dotsWrap.children).forEach((dot,n)=>dot.classList.toggle('active',n===index));
+  }
+
+  if(slides.length){
+    renderDots();
+    if(prev)prev.addEventListener('click',()=>goTo(index-1));
+    if(next)next.addEventListener('click',()=>goTo(index+1));
+    const viewport=document.querySelector('.carousel-viewport');
+    if(viewport){
+      viewport.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].clientX},{passive:true});
+      viewport.addEventListener('touchend',e=>{
+        if(touchStartX===null)return;
+        const dx=e.changedTouches[0].clientX-touchStartX;
+        if(Math.abs(dx)>50)goTo(index+(dx<0?1:-1));
+        touchStartX=null;
+      },{passive:true});
+    }
+    goTo(0);
   }
 })();
