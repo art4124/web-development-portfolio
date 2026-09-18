@@ -29,6 +29,32 @@
     revealItems.forEach(item=>item.classList.add('visible'));
   }
 
+  const featuredWrap=document.querySelector('.featured-projects');
+  const featuredSlides=featuredWrap?Array.from(featuredWrap.querySelectorAll('.hero-project-preview')):[];
+  if(featuredSlides.length>1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    let featuredIndex=0;
+    const interval=Number(featuredWrap.dataset.featuredInterval)||8000;
+    let featuredTimer=null;
+    const showFeatured=(nextIndex)=>{
+      featuredSlides[featuredIndex].classList.remove('active');
+      featuredIndex=(nextIndex+featuredSlides.length)%featuredSlides.length;
+      featuredSlides[featuredIndex].classList.add('active');
+    };
+    const startFeatured=()=>{
+      if(featuredTimer)return;
+      featuredTimer=window.setInterval(()=>showFeatured(featuredIndex+1),interval);
+    };
+    const stopFeatured=()=>{
+      if(!featuredTimer)return;
+      window.clearInterval(featuredTimer);
+      featuredTimer=null;
+    };
+    document.addEventListener('visibilitychange',()=>{
+      if(document.hidden)stopFeatured();else startFeatured();
+    });
+    startFeatured();
+  }
+
   const track=document.querySelector('.carousel-track');
   const slides=track?Array.from(track.querySelectorAll('.project-slide')):[];
   const prev=document.querySelector('.carousel-arrow.prev');
