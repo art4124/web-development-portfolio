@@ -31,6 +31,7 @@
 
   const featuredWrap=document.querySelector('.featured-projects');
   const featuredSlides=featuredWrap?Array.from(featuredWrap.querySelectorAll('.hero-project-preview')):[];
+  const featuredCard=featuredWrap?featuredWrap.closest('.browser-card'):null;
   if(featuredSlides.length>1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     let featuredIndex=0;
     const interval=Number(featuredWrap.dataset.featuredInterval)||8000;
@@ -38,7 +39,9 @@
     const showFeatured=(nextIndex)=>{
       featuredSlides[featuredIndex].classList.remove('active');
       featuredIndex=(nextIndex+featuredSlides.length)%featuredSlides.length;
-      featuredSlides[featuredIndex].classList.add('active');
+      const nextSlide=featuredSlides[featuredIndex];
+      nextSlide.classList.add('active');
+      if(featuredCard)featuredCard.dataset.featureTheme=nextSlide.dataset.featureTheme||'web';
     };
     const startFeatured=()=>{
       if(featuredTimer)return;
@@ -52,6 +55,7 @@
     document.addEventListener('visibilitychange',()=>{
       if(document.hidden)stopFeatured();else startFeatured();
     });
+    if(featuredCard)featuredCard.dataset.featureTheme=featuredSlides[0].dataset.featureTheme||'analytics';
     startFeatured();
   }
 
