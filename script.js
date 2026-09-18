@@ -32,10 +32,11 @@
   const featuredWrap=document.querySelector('.featured-projects');
   const featuredSlides=featuredWrap?Array.from(featuredWrap.querySelectorAll('.hero-project-preview')):[];
   const featuredCard=featuredWrap?featuredWrap.closest('.browser-card'):null;
+  const featuredVisual=featuredWrap?featuredWrap.closest('.hero-visual'):null;
   const applyFeaturedTheme=(slide)=>{
     const theme=(slide&&slide.dataset.featureTheme)||'web';
     if(featuredCard)featuredCard.dataset.featureTheme=theme;
-    document.body.dataset.siteTheme=theme;
+    if(featuredVisual)featuredVisual.dataset.featureTheme=theme;
   };
   if(featuredSlides.length)applyFeaturedTheme(featuredSlides[0]);
   if(featuredSlides.length>1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
