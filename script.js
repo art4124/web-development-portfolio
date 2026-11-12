@@ -90,10 +90,10 @@
 
   function goTo(i){
     if(!slides.length)return;
-    index=Math.max(0,Math.min(i,slides.length-1));
+    index=((i%slides.length)+slides.length)%slides.length;
     track.style.transform='translateX(-'+(index*100)+'%)';
-    if(prev)prev.disabled=index===0;
-    if(next)next.disabled=index===slides.length-1;
+    if(prev)prev.disabled=slides.length<=1;
+    if(next)next.disabled=slides.length<=1;
     if(count)count.textContent=String(index+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
     if(dotsWrap)Array.from(dotsWrap.children).forEach((dot,n)=>dot.classList.toggle('active',n===index));
   }
