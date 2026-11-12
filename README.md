@@ -10,7 +10,7 @@ A curated collection of functional public web projects, AI-assisted prototypes, 
 | --- | --- | --- | --- |
 | Chaeksoop — Korean Reading Library | In development; live web build with known audio/filtering issues under test | https://art4124.github.io/chaeksoop/ | https://github.com/art4124/chaeksoop |
 | Vune — Privacy-First Wellness Tracker | Functional browser prototype for fictional test data only | https://art4124.github.io/app_test/ | https://github.com/art4124/app_test |
-| Interactive Career Roadmap | Live personal planning tool | https://art4124.github.io/roadmap/ | https://github.com/art4124/roadmap |
+| Interactive Career Roadmap | Personal planning dashboard with milestones, checklists, progress summaries, and browser-saved updates; source code available, live demo intentionally not linked | — | https://github.com/art4124/roadmap |
 | Data Analytics Portfolio | Live portfolio website; individual analytics case studies are planned, not completed | https://art4124.github.io/data-analytics-portfolio/ | https://github.com/art4124/data-analytics-portfolio |
 | Web Development Portfolio | Live portfolio website | https://art4124.github.io/web-development-portfolio/ | https://github.com/art4124/web-development-portfolio |
 
