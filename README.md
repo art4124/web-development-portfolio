@@ -12,7 +12,7 @@ A curated collection of functional public web projects, AI-assisted prototypes, 
 | Vune — Privacy-First Wellness Tracker | Functional browser prototype for fictional test data only | https://art4124.github.io/app_test/ | https://github.com/art4124/app_test |
 | Interactive Career Roadmap | Personal planning dashboard with milestones, checklists, progress summaries, and browser-saved updates; source code available, live demo intentionally not linked | — | https://github.com/art4124/roadmap |
 | Data Analytics Portfolio | Live portfolio website; individual analytics case studies are planned, not completed | https://art4124.github.io/data-analytics-portfolio/ | https://github.com/art4124/data-analytics-portfolio |
-| Web Development Portfolio | Live portfolio website | https://art4124.github.io/web-development-portfolio/ | https://github.com/art4124/web-development-portfolio |
+| Web Development Portfolio | Live portfolio website (this site) | — | https://github.com/art4124/web-development-portfolio |
 
 The project statuses distinguish functional demos from production-ready products. Ongoing game prototypes and private repositories are intentionally not published here.
 
