@@ -72,8 +72,60 @@
   const next=document.querySelector('.carousel-arrow.next');
   const dotsWrap=document.querySelector('.carousel-dots');
   const count=document.querySelector('.carousel-count');
+  const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let index=0;
+  let visualIndex=slides.length>1?1:0;
+  let animating=false;
+  let settleTimer=null;
   let touchStartX=null;
+
+  // Add visual-only end slides so the last-to-first transition moves forward,
+  // and the first-to-last transition moves backward, without a visible rewind.
+  if(track&&slides.length>1){
+    const makeClone=(slide)=>{
+      const clone=slide.cloneNode(true);
+      clone.setAttribute('aria-hidden','true');
+      clone.setAttribute('inert','');
+      clone.querySelectorAll('a,button,input,select,textarea,[tabindex]').forEach(el=>el.setAttribute('tabindex','-1'));
+      return clone;
+    };
+    track.insertBefore(makeClone(slides[slides.length-1]),slides[0]);
+    track.appendChild(makeClone(slides[0]));
+  }
+
+  function positionTrack(immediate){
+    if(!track)return;
+    if(immediate)track.style.transition='none';
+    track.style.transform='translateX(-'+(visualIndex*100)+'%)';
+    if(immediate){
+      // Force the invisible snap to complete before restoring slide animation.
+      void track.offsetWidth;
+      track.style.transition='';
+    }
+  }
+
+  function updateNavigation(){
+    if(prev)prev.disabled=slides.length<=1;
+    if(next)next.disabled=slides.length<=1;
+    if(count)count.textContent=String(index+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+    if(dotsWrap)Array.from(dotsWrap.children).forEach((dot,n)=>dot.classList.toggle('active',n===index));
+  }
+
+  function settle(){
+    if(!animating)return;
+    animating=false;
+    if(settleTimer!==null){
+      window.clearTimeout(settleTimer);
+      settleTimer=null;
+    }
+    if(visualIndex===0){
+      visualIndex=slides.length;
+      positionTrack(true);
+    }else if(visualIndex===slides.length+1){
+      visualIndex=1;
+      positionTrack(true);
+    }
+  }
 
   function renderDots(){
     if(!dotsWrap)return;
@@ -89,17 +141,40 @@
   }
 
   function goTo(i){
-    if(!slides.length)return;
-    index=((i%slides.length)+slides.length)%slides.length;
-    track.style.transform='translateX(-'+(index*100)+'%)';
-    if(prev)prev.disabled=slides.length<=1;
-    if(next)next.disabled=slides.length<=1;
-    if(count)count.textContent=String(index+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
-    if(dotsWrap)Array.from(dotsWrap.children).forEach((dot,n)=>dot.classList.toggle('active',n===index));
+    if(!slides.length||animating)return;
+    const target=((i%slides.length)+slides.length)%slides.length;
+    if(target===index)return;
+    if(slides.length>1){
+      if(i===index+1 || (index===slides.length-1&&target===0)){
+        visualIndex+=1;
+      }else if(i===index-1 || (index===0&&target===slides.length-1)){
+        visualIndex-=1;
+      }else{
+        visualIndex=target+1;
+      }
+    }else{
+      visualIndex=0;
+    }
+    index=target;
+    updateNavigation();
+    if(reducedMotion){
+      visualIndex=index+1;
+      positionTrack(true);
+      return;
+    }
+    animating=true;
+    positionTrack(false);
+    // Recover if the browser suppresses transitionend (e.g. tab hidden).
+    settleTimer=window.setTimeout(settle,650);
   }
 
   if(slides.length){
     renderDots();
+    positionTrack(true);
+    updateNavigation();
+    if(track)track.addEventListener('transitionend',e=>{
+      if(e.target===track&&e.propertyName==='transform')settle();
+    });
     if(prev)prev.addEventListener('click',()=>goTo(index-1));
     if(next)next.addEventListener('click',()=>goTo(index+1));
     const viewport=document.querySelector('.carousel-viewport');
@@ -112,6 +187,5 @@
         touchStartX=null;
       },{passive:true});
     }
-    goTo(0);
   }
 })();
